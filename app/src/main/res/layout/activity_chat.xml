@@ -6,55 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
-    <Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-
-            android:id="@+id/imageView_back"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_back" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_amie_chat"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="26dp"
-            android:src="@drawable/ic_account_circle_24"
-
-            />
-
-        <TextView
-            android:id="@+id/textView_amie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="userName"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:textStyle="bold"
 
 
-            />
 
-
-    </Toolbar>
-
-    <androidx.recyclerview.widget.RecyclerView
-
-        android:layout_width="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -119,6 +73,61 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycle_activity"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:reverseLayout="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+        />
+
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+
+            android:id="@+id/imageView_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_back" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_amie_chat"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="26dp"
+            android:src="@drawable/ic_account_circle_24"
+
+            />
+
+        <TextView
+            android:id="@+id/textView_amie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="userName"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+
+
+            />
+
+
+    </Toolbar>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

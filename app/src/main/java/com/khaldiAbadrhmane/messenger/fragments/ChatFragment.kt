@@ -2,21 +2,16 @@ package com.khaldiAbadrhmane.messenger.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.khaldiAbadrhmane.messenger.ChatActivity
 import com.khaldiAbadrhmane.messenger.ProfileActivity
 import com.khaldiAbadrhmane.messenger.R
@@ -74,8 +69,11 @@ private lateinit var chatSection: Section
             }
            val items= mutableListOf<com.xwray.groupie.kotlinandroidextensions.Item>()
            value!!.documents.forEach  {document ->
-               document.id.removeRange(0,4)
-               items.add(ChatItem(document.id,document.toObject(User::class.java)!!,requireActivity() ) )
+              val s=document.id.removeRange(0,5)
+
+               if (s!= mAuth.currentUser!!.uid) {
+                   items.add(ChatItem(s, document.toObject(User::class.java)!!, requireActivity()))
+               }
 
            }
            onListen(items)
@@ -106,7 +104,7 @@ private val onItem =OnItemClickListener{ item,view ->
         val intentChatActivity=Intent(activity, ChatActivity::class.java)
         intentChatActivity.putExtra("username", item.user.name)
         intentChatActivity.putExtra("profile_image", item.user.pathimage)
-        intentChatActivity.putExtra("uid",)
+        intentChatActivity.putExtra("uid",item.uid)
         requireActivity().startActivity(intentChatActivity)
 
     }
