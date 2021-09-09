@@ -87,7 +87,8 @@ class ProfileActivity : AppCompatActivity() {
 
 
             mAuth.signOut()
-
+            MainActivity().finish()
+            
             val intentsignInActivity= Intent(this,SignInActivity::class.java)
             intentsignInActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intentsignInActivity)

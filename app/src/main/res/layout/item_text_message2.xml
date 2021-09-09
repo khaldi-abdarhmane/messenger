@@ -3,6 +3,7 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
@@ -13,19 +14,19 @@
     >
 
     <FrameLayout
-        android:id="@+id/Message_root"
+        android:id="@+id/Message_root2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@drawable/background_message_text"
+        android:background="@drawable/background_message_text2"
         android:padding="4dp"
 
 
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
 
         <TextView
-            android:id="@+id/text_view_message"
+            android:id="@+id/text_view_message2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -33,27 +34,28 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
 
+
             android:text="Hi Ahmed ,hou are you "
             android:textAppearance="@style/Base.CardView"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
 
     </FrameLayout>
 
     <TextView
-        android:id="@+id/text_view_time"
+        android:id="@+id/text_view_time2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="8dp"
         android:gravity="end"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:text="12:12pm"
         android:textSize="12sp"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/Message_root"
+        app:layout_constraintStart_toEndOf="@+id/Message_root2"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

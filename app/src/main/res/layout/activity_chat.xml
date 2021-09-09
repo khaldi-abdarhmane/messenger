@@ -19,7 +19,7 @@
         tools:layout_editor_absoluteX="-16dp">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imageView_send_message"
             android:layout_width="32dp"
             android:layout_height="32dp"
 
@@ -47,7 +47,7 @@
             android:paddingEnd="32dp"
             android:paddingBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@+id/imageView_send_message"
             app:layout_constraintStart_toStartOf="parent"
 
             app:layout_constraintTop_toTopOf="parent"
