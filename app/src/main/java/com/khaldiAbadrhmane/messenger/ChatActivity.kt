@@ -19,7 +19,12 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.khaldiAbadrhmane.messenger.glide.GlideApp
+import com.khaldiAbadrhmane.messenger.model.ImageMessage
+import com.khaldiAbadrhmane.messenger.model.MessageType
+import com.khaldiAbadrhmane.messenger.model.Messge
 import com.khaldiAbadrhmane.messenger.model.TextMessage
+import com.khaldiAbadrhmane.messenger.recyclerview.SenderImageMessageItem
+import com.khaldiAbadrhmane.messenger.recyclerview.SenderImageMessageItem2
 import com.khaldiAbadrhmane.messenger.recyclerview.TextMessageitem
 import com.khaldiAbadrhmane.messenger.recyclerview.TextMessageitem2
 import com.xwray.groupie.GroupAdapter
@@ -32,6 +37,7 @@ import java.util.*
 
 class ChatActivity : AppCompatActivity() {
 
+    private lateinit var  mCurrentChatChannelId:String
     private val currentImageRef: StorageReference
         get() = storageInstance.reference
     companion object{
@@ -41,13 +47,10 @@ class ChatActivity : AppCompatActivity() {
         FirebaseAuth.getInstance()
     }
     val firestoreInstance: FirebaseFirestore by lazy {
-
         FirebaseFirestore.getInstance()
     }
     private val storageInstance by lazy {
-
         FirebaseStorage.getInstance()
-
     }
     private val chatChannelsCollectionRef=firestoreInstance.collection("chatChannels")
     private val currentUserDocRef: DocumentReference
@@ -55,51 +58,34 @@ class ChatActivity : AppCompatActivity() {
     private val currentUserStorageRef: StorageReference
         get() = storageInstance.reference.child("profile:"+mAuth.currentUser?.uid.toString())
     val mcurrentUserId= mAuth.currentUser!!.uid
-
-
     private var muidRecipient  =""
-
-
     private val messageAdapter by lazy {
         GroupAdapter<ViewHolder>()
-
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
-
+        textView12.visibility=View.GONE
         imageView_send_message.setOnClickListener {
-
-
-                val myIntentimage= Intent().apply {
+            val myIntentimage= Intent().apply {
                     type="image/*"
                     action=Intent.ACTION_GET_CONTENT
                     putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg","image/png"))
-
-                }
+            }
                 startActivityForResult(Intent.createChooser(myIntentimage,"select Image"), ChatActivity.RC_SELECT_IMAGE)
-
-
-
-
         }
 
-
-    /////////////////////////bestbare/////////////////////////
+        /////////////////////////bestbare/////////////////////////
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }else{
             window.statusBarColor= Color.WHITE
         }
         imageView_back.setOnClickListener {
-
             finish()
         }
       //recycle_view
-
-      //  val username=
+        //  val username=
         val a=intent.getStringExtra("username")
         val profileImage= intent.getStringExtra("profile_image")
         muidRecipient= intent.getStringExtra("uid")!!
@@ -114,14 +100,10 @@ class ChatActivity : AppCompatActivity() {
         }
         createChatChannel{
             channelId ->
+            mCurrentChatChannelId=channelId
             getMessages(channelId)
-
             send_message_imageView.setOnClickListener {
-
-
                 val text=send_message_edittext.text.toString()
-
-
                 if (text.isNotEmpty()){
                     val messageSend=TextMessage( text ,
                             mcurrentUserId,
@@ -132,26 +114,19 @@ class ChatActivity : AppCompatActivity() {
                 }else{
                     Toast.makeText(this,"Empty",Toast.LENGTH_SHORT).show()
                 }
-
-
-
-
             }
-
-
         }
 
 
 ///////////////////////////////////////////////////////////////
         chat_recycle_activity.apply {
-
             adapter=messageAdapter
-
         }
 ////////////////////////////////////////////////////////////
 
     }
-    private fun sendMessage(channelId:String,message: TextMessage) {
+
+    private fun sendMessage(channelId:String,message: Messge) {
 
         chatChannelsCollectionRef.document(channelId).collection("messages").add(message)
 
@@ -201,24 +176,55 @@ class ChatActivity : AppCompatActivity() {
            messageAdapter.clear()
             value!!.documents.forEach {document->
 
-                val textMessage=document.toObject(TextMessage::class.java)
-                if (textMessage?.senderId==mcurrentUserId){
-                    messageAdapter.add(
-                        TextMessageitem(
-                                document.toObject(TextMessage::class.java)!!,
-                                document.id,
-                                this
-                        ))
+
+                if(document["type"]==MessageType.TEXT){
+
+                    val textMessage=document.toObject(TextMessage::class.java)
+                    if (textMessage?.senderId==mcurrentUserId){
+                        messageAdapter.add(
+                                TextMessageitem(
+                                        document.toObject(TextMessage::class.java)!!,
+                                        document.id,
+                                        this
+                                ))
+
+                    }else{
+                        messageAdapter.add(
+                                TextMessageitem2(
+                                        document.toObject(TextMessage::class.java)!!,
+                                        document.id,
+                                        this
+                                ))
+
+                    }
 
                 }else{
-                    messageAdapter.add(
-                            TextMessageitem2(
-                                    document.toObject(TextMessage::class.java)!!,
-                                    document.id,
-                                    this
-                            ))
 
-                }
+                    val imageMessage=document.toObject(ImageMessage::class.java)
+                    if (imageMessage?.senderId==mcurrentUserId){
+                        messageAdapter.add(
+                                SenderImageMessageItem(
+                                        document.toObject(ImageMessage::class.java)!!,
+                                        document.id,
+                                        this
+                                ))
+
+                    }
+
+                    else{
+                        messageAdapter.add(
+                                SenderImageMessageItem2(
+                                        document.toObject(ImageMessage::class.java)!!,
+                                        document.id,
+                                        this
+                                ))
+
+                    }
+
+
+                    }
+
+
 
 
 
@@ -227,7 +233,6 @@ class ChatActivity : AppCompatActivity() {
 
 
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -237,15 +242,20 @@ class ChatActivity : AppCompatActivity() {
             val selectedImagePath = data.data
             val selectedImageBmp= MediaStore.Images.Media.getBitmap(this.contentResolver,selectedImagePath)
             val outputStorage= ByteArrayOutputStream()
-            selectedImageBmp.compress(Bitmap.CompressFormat.JPEG,20,outputStorage)
+            selectedImageBmp.compress(Bitmap.CompressFormat.JPEG,25,outputStorage)
             val seletedImageBytes=outputStorage.toByteArray()
+
             uploadImage(seletedImageBytes){
 
-                path ->
-                val userFieldMap= mutableMapOf<String,Any>()
-                userFieldMap["name"]=userName
-                userFieldMap["pathimage"]=path
-                currentUserDocRef.update(userFieldMap)
+               path ->
+
+                val imageMessage = ImageMessage(path ,
+                        mcurrentUserId,
+                        muidRecipient,
+                        Calendar.getInstance().time)
+
+              //   chatChannelsCollectionRef.document(mCurrentChatChannelId).collection("messages").add(imageMessage)
+                sendMessage(mCurrentChatChannelId,imageMessage)
 
 
 
@@ -257,20 +267,21 @@ class ChatActivity : AppCompatActivity() {
         }
 
     }
-
     private fun uploadImage(seletedImageBytes: ByteArray, OnSuccess:(imagePath:String)->Unit ) {
-
-        val ref= currentImageRef.child("${mAuth.currentUser!!.uid}/image/send")
+            progressBar12.visibility=View.VISIBLE
+        val ref= currentImageRef.child("${mAuth.currentUser!!.uid}/image/send/${UUID.nameUUIDFromBytes(seletedImageBytes)}")
         ref.putBytes(seletedImageBytes).addOnCompleteListener {
             task ->
             if (task.isSuccessful){
-
+                progressBar12.visibility=View.GONE
                 OnSuccess(ref.path)
-                progressBarprofile.visibility=View.GONE
+
 
 
             }else{
-                Toast.makeText(this,"ERROR : ${task.exception?.message }",Toast.LENGTH_LONG).show()
+                progressBar12.visibility=View.GONE
+                textView12.visibility=View.VISIBLE
+                textView12.text="ERROR : ${task.exception?.message }"
             }
 
         }
