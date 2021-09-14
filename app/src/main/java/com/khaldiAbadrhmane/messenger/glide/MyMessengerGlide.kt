@@ -10,7 +10,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
 @GlideModule
-class MyMessengerGlide:AppGlideModule() {
+class MynessengerGlide:AppGlideModule() {
 
      override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         registry.append(StorageReference::class.java,InputStream::class.java,FirebaseImageLoader.Factory())

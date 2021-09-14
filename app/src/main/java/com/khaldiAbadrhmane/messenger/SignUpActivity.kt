@@ -11,10 +11,9 @@ import android.view.View
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
+
 import com.khaldiAbadrhmane.messenger.model.User
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -27,14 +26,14 @@ class SignUpActivity : AppCompatActivity(),TextWatcher {
 // Initialize Firebase Auth
 
 
-    private val mAuth:FirebaseAuth by lazy {
+    private val mAuth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
 
     val firestoreInstance: FirebaseFirestore by lazy {
         FirebaseFirestore.getInstance()
     }
-    private val currentUserDocRef:DocumentReference
+    private val currentUserDocRef: DocumentReference
     get() = firestoreInstance.document("users/user:${mAuth.currentUser?.uid.toString() }")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+
 import com.khaldiAbadrhmane.messenger.glide.GlideApp
 import com.khaldiAbadrhmane.messenger.model.ImageMessage
 import com.khaldiAbadrhmane.messenger.model.MessageType
@@ -135,12 +136,6 @@ class ChatActivity : AppCompatActivity() {
     }
     private fun createChatChannel(onComplete:(channelId:String)-> Unit){
 
-
-
-
-
-
-
         firestoreInstance.collection("users")
                 .document("user:"+mcurrentUserId)
                 .collection("chatChannelSet")
@@ -171,7 +166,7 @@ class ChatActivity : AppCompatActivity() {
     }
     private fun getMessages(channelId: String){
 
-        val query = chatChannelsCollectionRef.document(channelId).collection("messages").orderBy("date",Query.Direction.DESCENDING)
+        val query = chatChannelsCollectionRef.document(channelId).collection("messages").orderBy("date", Query.Direction.DESCENDING)
         query.addSnapshotListener { value, error ->
            messageAdapter.clear()
             value!!.documents.forEach {document->

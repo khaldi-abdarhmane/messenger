@@ -32,14 +32,14 @@ class ChatFragment : Fragment() {
 
         FirebaseFirestore.getInstance()
     }
-private lateinit var chatSection: Section
+    private lateinit var chatSection: Section
 
 
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
         val textViewTitle= activity?.findViewById(R.id.Toolbar_main_text) as TextView
@@ -49,7 +49,8 @@ private lateinit var chatSection: Section
 
         circleImageView_profile_image.setOnClickListener {
 
-         startActivity(Intent(activity, ProfileActivity::class.java))
+            startActivity(Intent(activity, ProfileActivity::class.java))
+            requireActivity().finish()
 
         }
 
@@ -62,54 +63,57 @@ private lateinit var chatSection: Section
 
     private fun addChatListener( onListen:(List<com.xwray.groupie.kotlinandroidextensions.Item>) -> Unit ):ListenerRegistration {
 
-       return  firestoreInstance.collection("users").addSnapshotListener {
-               value, error ->
-           if (error != null) {
+        return  firestoreInstance.collection("users")
+                .document("user:"+ mAuth.currentUser!!.uid)
+                .collection("chatChannelSet")
+                .addSnapshotListener {
+            value, error ->
+            if (error != null) {
                 return@addSnapshotListener
             }
-           val items= mutableListOf<com.xwray.groupie.kotlinandroidextensions.Item>()
-           value!!.documents.forEach  {document ->
-              val s=document.id.removeRange(0,5)
+            val items= mutableListOf<com.xwray.groupie.kotlinandroidextensions.Item>()
+            value!!.documents.forEach  {document ->
+                val s=document.id
 
-               if (s!= mAuth.currentUser!!.uid) {
-                   items.add(ChatItem(s, document.toObject(User::class.java)!!, requireActivity()))
-               }
+                if (document.exists()) {
+                    items.add(ChatItem(s, document.toObject(User::class.java)!!, requireActivity()))
+                }
 
-           }
-           onListen(items)
+            }
+            onListen(items)
 
 
         }
 
     }
 
-private fun initRecyclerView(items:List<com.xwray.groupie.kotlinandroidextensions.Item>){
-    chat_recyclerView.apply {
-        layoutManager=LinearLayoutManager(activity)
-        adapter=GroupAdapter<ViewHolder>().apply {
-            chatSection = Section(items)
-            add(chatSection)
-            setOnItemClickListener(onItem)
+    private fun initRecyclerView(items:List<com.xwray.groupie.kotlinandroidextensions.Item>){
+        chat_recyclerView.apply {
+            layoutManager=LinearLayoutManager(activity)
+            adapter=GroupAdapter<ViewHolder>().apply {
+                chatSection = Section(items)
+                add(chatSection)
+                setOnItemClickListener(onItem)
+            }
+
+
+
+        }
+    }
+    private val onItem =OnItemClickListener{ item,view ->
+
+        if(item is ChatItem){
+
+
+            val intentChatActivity=Intent(activity, ChatActivity::class.java)
+            intentChatActivity.putExtra("username", item.user.name)
+            intentChatActivity.putExtra("profile_image", item.user.pathimage)
+            intentChatActivity.putExtra("uid",item.uid)
+            requireActivity().startActivity(intentChatActivity)
+
         }
 
 
-
     }
-}
-private val onItem =OnItemClickListener{ item,view ->
-
-    if(item is ChatItem){
-
-
-        val intentChatActivity=Intent(activity, ChatActivity::class.java)
-        intentChatActivity.putExtra("username", item.user.name)
-        intentChatActivity.putExtra("profile_image", item.user.pathimage)
-        intentChatActivity.putExtra("uid",item.uid)
-        requireActivity().startActivity(intentChatActivity)
-
-    }
-
-
-}
 
 }
